@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class Song {
+            constructor(name, position){
+                this.name = name;
+                this.position = position;
+            }
+            describe() {
+                return `${this.name} plays ${this.position}.`;
+            }
+        }
+
+        class CD {
+            constructor(name) {
+                this.name = name;
+                this.Songs = [];
+            }
+        
+
+            addSong(Song) {
+                if (Song instanceof Song){
+                    this.Songs.push(Song);
+                } else {
+                    throw new Error(`You can only add an instance of Song.  Argument is not a Song: ${Song}`);
+                }
+            }
+            
+
+            describe(){
+                return `${this.name} has ${this.Songs.length} Songs.`;
+            }
+        }
+
+        class Menu {
+            constructor() {
+                this.CDs = [];
+                this.selectedCD = null;
+            }
+
+            start() {
+                let selection = this.showMainMenuOptions();
+                while (selection != 0) {
+                    switch (selection) {
+                        case '1': 
+                            this.createCD();
+                            break;
+                        case '2':
+                            this.viewCD();
+                            break;
+                        case '3':
+                            this.deleteCD();
+                            break;
+                        case '4':
+                            this.displayCDs();
+                            break;
+                        default:
+                            selection = 0;
+                    }
+                    selection = this.showMainMenuOptions();
+                }
+                alert('Goodbye!');
+            }
+
+            showMainMenuOptions() {
+                return prompt(`
+                    0) Exit
+                    1) Create New CD
+                    2) View CDs/Songs
+                    3) Delete CD
+                    4) Display All CDs
+                `);
+            }
+
+            showCDMenuOptions(CDInfo) {
+                return prompt(`
+                    0) Back
+                    1) Create Song
+                    2) Delete Song
+                    _______________________
+                    ${CDInfo}
+                `);
+            }
+
+
+            displayCDs() {
+                let CDString = '';
+                for (let i=0;i<this.CDs.length;i++){
+                    CDString += i + ') ' + this.CDs[i].name + '\n';
+                }
+                alert(CDString);
+            }
+
+            createCD() {
+                let name = prompt('Enter name for new CD:');
+                this.CDs.push(new CD(name));
+            }
+
+            viewCD() {
+                let index = prompt('Enter the index of the CD you wish to view:');
+                if (index > -1 && index < this.CDs.length) {
+                    this.selectedCD = this.CDs[index];
+                    let description = 'CD Name: ' + this.selectedCD.name + ' \n';
+
+                    for (let i=0; i < this.selectedCD.Songs.length; i++){
+                        description += i + ') ' + this.selectedCD.Songs[i].name 
+                        + ' - ' + this.selectedCD.Songs[i].position + '\n';
+                    }
+
+                    let selection = this.showCDMenuOptions(description);
+
+                    switch (selection){
+                        case '1':
+                            this.createSong();
+                            break;
+                        case '2':
+                            this.deleteSong();
+                    }
+                }
+            }
+
+            deleteCD() {
+                let index = prompt('Enter index of CD to delete:');
+                if (index > -1 && index < this.CDs.length) {
+                    this.CDs.splice(index,1);
+                }
+            }
+
+            createSong() {
+                let name = prompt('Enter name for new Song:');
+                let position = prompt('Enter position on CD for new Song:');
+                this.selectedCD.Songs.push(new Song(name, position));
+            }
+
+            deleteSong(){
+                let index = prompt('Enter index of Song to delete: ');
+                if (index >-1 && index <this.selectedCD.Songs.length) {
+                    this.selectedCD.Songs.splice(index,1);
+                }
+            }
+
+
+
+
+        }
+
+        let menu = new Menu();
+        menu.start();
+    </script>
+</body>
+</html>
